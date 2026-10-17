@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<base href="../">
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+
+	<script src="src/lib/createjs.1.0.0.min.js"></script>
+	<script src="src/lib/howler.core.2.2.3.min.js"></script>
+	<script src="src/lib/pixi-legacy.5.3.9.min.js"></script>
+	<script src="src/lib/Pixim.min.js"></script>
+	<script src="src/lib/Pixim-animate-container.min.js"></script>
+
+	<title></title>
+
+	<style>
+		canvas {
+			touch-action: none;
+			position: absolute !important;
+			top: 0px !important;
+			left: 0px !important;
+			cursor: inherit;
+			height: 100% !important;
+			width: 100% !important;
+		}
+		#splash-screen {
+			position: fixed;
+			top: 0; left: 0;
+			width: 100%; height: 100%;
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-image: url('assets/images/splashbg.png');
+			background-size: cover;
+			background-position: center;
+			background-color: #000;
+			transition: opacity 0.6s ease;
+		}
+		#splash-screen.fade-out {
+			opacity: 0;
+			pointer-events: none;
+		}
+		#splash-logo {
+			max-width: 47%;
+			max-height: 47%;
+			object-fit: contain;
+		}
+	</style>
+</head>
+
+<body style="margin:0px; overflow: hidden; background-color:#ffffff;">
+
+	<div id="splash-screen">
+		<img id="splash-logo" src="assets/images/splashlogo.png" alt="logo" />
+	</div>
+
+	<script src="src/lib/SCG-gd-pixim.min.js"></script>
+
+	<script>
+		(function() {
+			var splash = document.getElementById('splash-screen');
+			var minTime = 3000;
+
+			function startGame() {
+				SCG.init({
+					basepath: './',
+					version: '202312221204',
+					pixiOptions: { resolution: 2 }
+				}, {
+					gameId: "1",
+					sdk: "src/main.min.js",
+					contentKey: "parkgame",
+					usePrerollAd: false,
+					introOptions: {}
+				}, {
+					languages: ["en"],
+					languageOptions: ''
+				});
+
+				var script = document.createElement('script');
+				script.src = 'src/ads.js';
+
+				script.onload = function() {
+					console.log("ads.js loaded");
+					if (typeof integration !== "undefined" && integration.showBanner) {
+						integration.showBanner();
+					} else {
+						console.warn("");
+					}
+					var bundle = document.createElement('script');
+					bundle.src = 'src/bundle.js';
+					document.body.appendChild(bundle);
+				};
+
+				document.body.appendChild(script);
+			}
+
+			function hideSplash() {
+				splash.classList.add('fade-out');
+
+				setTimeout(function() {
+					splash.style.display = 'none';
+					startGame();
+				}, 650);
+			}
+
+			setTimeout(hideSplash, minTime);
+		})();
+	</script>
+
+</body>
+</html>
